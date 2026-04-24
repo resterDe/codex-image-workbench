@@ -1,0 +1,11 @@
+scripts/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+codex-image-output/
+output/
+
+# Local-only image results
+generated/
+

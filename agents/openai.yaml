@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Image Workbench"
+  short_description: "Generate or edit images from a local provider config"
+  default_prompt: "Create, edit, or iterate on images by using the skill's image-provider.toml configuration first."

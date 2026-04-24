@@ -1,0 +1,8 @@
+[provider]
+base_url = "https://your-openai-compatible-endpoint.example.com/"
+api_key = "YOUR_API_KEY_HERE"
+model = "gpt-image-2"
+wire_api = "responses"
+
+[detection]
+candidate_models = ["gpt-image-2", "gpt-image-1", "gpt-4.1-mini"]
