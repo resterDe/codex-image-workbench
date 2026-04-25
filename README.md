@@ -2,6 +2,8 @@
 
 A reusable Codex skill for image generation and editing with OpenAI-compatible image providers, focused on `gpt-image-2` style workflows.
 
+> 中文用户可以直接参考 [中文快速开始](#中文快速开始) 和 [中文提示词模板](#中文提示词模板)。
+
 It supports:
 
 - text-to-image generation
@@ -37,6 +39,91 @@ On Windows, a typical path is:
 ```text
 C:\Users\<you>\.codex\skills\codex-image-workbench
 ```
+
+## 中文快速开始
+
+这是一个可复用的 Codex 图片生成 / 图片编辑 Skill，支持 OpenAI 兼容的图片模型接口。你可以用它完成文生图、基于本地图片的局部编辑、模型探测、请求预览和本地图片预览窗口。
+
+### 安装到 Codex Skills
+
+将本仓库复制或克隆到 Codex 的 skills 目录：
+
+```powershell
+git clone https://github.com/resterDe/codex-image-workbench.git "$env:USERPROFILE\.codex\skills\codex-image-workbench"
+```
+
+### 配置图片接口
+
+编辑 `image-provider.toml`，把占位符替换为你的服务商信息：
+
+```toml
+[provider]
+base_url = "https://你的-openai-compatible-endpoint.example.com/v1"
+api_key = "你的 API Key"
+model = "gpt-image-2"
+wire_api = "responses"
+
+[detection]
+candidate_models = ["gpt-image-2", "gpt-image-1", "gpt-4.1-mini"]
+```
+
+也可以不改文件，改用环境变量，避免把真实密钥提交到仓库：
+
+```powershell
+$env:CODEX_IMAGE_BASE_URL = "https://你的服务商地址/v1"
+$env:CODEX_IMAGE_API_KEY = "你的真实 API Key"
+$env:CODEX_IMAGE_MODEL = "gpt-image-2"
+```
+
+### 常用命令
+
+```powershell
+# 文生图
+python .\scripts\codex_image_workbench.py --prompt "一张电影感的孙悟空肖像" --quality high --size 1024x1536
+
+# 编辑图片
+python .\scripts\codex_image_workbench.py --prompt "只把发型改成长发，保持脸部不变" --image "C:\path\avatar.png"
+
+# 打开预览窗口
+python .\scripts\codex_image_workbench.py --prompt "未来城市天际线" --preview --ephemeral --skip-metadata
+
+# 探测可用图片模型
+python .\scripts\codex_image_workbench.py --probe
+
+# 只检查配置和请求结构，不实际发送请求
+python .\scripts\codex_image_workbench.py --prompt "test" --dry-run
+```
+
+## 中文提示词模板
+
+你可以在 Codex 中这样调用本 Skill：
+
+```text
+使用 codex-image-workbench 生成图片：
+主题：一只穿赛博朋克夹克的橘猫
+风格：电影感、霓虹灯、浅景深
+画幅：1024x1024
+质量：high
+要求：主体清晰，背景有城市夜景，不要文字水印
+```
+
+编辑已有图片时可以使用这个模板：
+
+```text
+使用 codex-image-workbench 编辑图片：
+源图：C:\path\input.png
+修改目标：把背景改成海边日落
+保留内容：人物脸部、姿势、衣服颜色保持不变
+风格：自然真实、柔和光线
+输出要求：只改背景，不添加文字，不改变人物比例
+```
+
+更稳定的提示词写法：
+
+- 明确 `主题`、`风格`、`画幅`、`质量` 和 `不要出现的内容`。
+- 编辑图片时写清楚 `需要修改什么` 和 `必须保留什么`。
+- 如果要连续迭代，说明“基于上一张继续调整”，并只描述本轮变化。
+- 不要把真实 API Key 写进提示词；用 `image-provider.toml` 或环境变量配置。
 
 ## Configure
 
