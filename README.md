@@ -40,7 +40,7 @@ C:\Users\<you>\.codex\skills\codex-image-workbench
 
 ## Configure
 
-Edit `image-provider.toml` and replace the placeholder values:
+The repository ships with a sanitized `image-provider.toml` template. Replace the placeholders in your local skill copy before running the skill:
 
 ```toml
 [provider]
@@ -53,11 +53,44 @@ wire_api = "responses"
 candidate_models = ["gpt-image-2", "gpt-image-1", "gpt-4.1-mini"]
 ```
 
-Notes:
+### Provider Fields
+
+- `base_url`: your OpenAI-compatible provider root URL. A plain root such as `https://example.com/` is normalized to `/v1` by the runner.
+- `api_key`: your provider API key. Keep the checked-in value as `YOUR_API_KEY_HERE` for public repositories.
+- `model`: the default model used for generation or editing, for example `gpt-image-2`.
+- `wire_api`: force a request style when needed. Use `responses` for Responses API-compatible models, or leave the script to route `gpt-image-*` models to image endpoints.
+- `candidate_models`: model names tried by `--probe` when discovering a working image-capable model.
+
+### Safer Local Configuration
+
+For public forks, do not commit real credentials. Prefer environment variables or command-line overrides:
+
+```powershell
+$env:CODEX_IMAGE_BASE_URL = "https://your-provider.example.com/v1"
+$env:CODEX_IMAGE_API_KEY = "your-real-api-key"
+$env:CODEX_IMAGE_MODEL = "gpt-image-2"
+```
+
+Or pass values for a single run:
+
+```powershell
+python .\scripts\codex_image_workbench.py --prompt "test" --base-url "https://your-provider.example.com/v1" --api-key "your-real-api-key" --model "gpt-image-2"
+```
+
+Configuration is resolved in this order:
+
+1. Command-line flags: `--base-url`, `--api-key`, `--model`
+2. Environment variables: `CODEX_IMAGE_BASE_URL`, `CODEX_IMAGE_API_KEY`, `CODEX_IMAGE_MODEL`
+3. Skill-local `image-provider.toml`
+4. Codex config/auth fallback when available
+
+Security notes:
 
 - `gpt-image-*` style models are sent to the Images API endpoints.
 - other compatible models can fall back to the Responses API path.
 - the script never prints the raw API key in normal output.
+- if your local Codex gateway manages auth, `PROXY_MANAGED` can be used as the API key sentinel.
+- before publishing changes, run a secret scan and confirm `image-provider.toml` still contains placeholders.
 
 ## Usage
 
